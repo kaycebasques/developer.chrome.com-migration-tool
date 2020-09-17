@@ -2,6 +2,7 @@ const readline = require('readline');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const TurndownService = require('turndown');
+const axios = require('axios');
 const outputDirectory = 'output';
 
 function init() {
@@ -17,6 +18,23 @@ function init() {
   readInterface.on('close', () => {
     migrate(targets);
   });
+}
+
+async function download(image) {
+  console.log('download', image);
+  // let name = new URL(image.src).pathname;
+  // name = name.substring(name.lastIndexOf('/') + 1);
+  // return {
+  //   destination: `${destination}${name}`,
+  //   url: image.src
+  // };
+  // const writer = fs.createWriteStream(path);
+  // const response = await axios({
+  //   url,
+  //   method: 'GET',
+  //   responseType: 'stream'
+  // });
+  // response.data.pipe(writer);
 }
 
 async function modify(page) {
@@ -56,7 +74,10 @@ async function migrate(targets) {
     });
     await cleanup(page);
     await modify(page);
-    const html = await page.$eval('div[itemprop="articleBody"]', element => element.innerHTML);
+    const contentSelector = 'div[itemprop="articleBody"]';
+    const html = await page.$eval(contentSelector, element => element.innerHTML);
+    const images = await page.$$eval(`${contentSelector} img`, images => images.map(image => image.src));
+    images.forEach(image => download(image));
     const turndownService = TurndownService({
       headingStyle: 'atx',
       codeBlockStyle: 'fenced',
