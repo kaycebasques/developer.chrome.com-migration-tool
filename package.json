@@ -1,0 +1,17 @@
+{
+  "name": "developer.chrome.com-migration-tool",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "node index.js"
+  },
+  "devDependencies": {
+    "puppeteer": "5.2.1"
+  },
+  "dependencies": {
+    "turndown": "6.0.0"
+  },
+  "engines": {
+    "node": "12.18.4"
+  }
+}
