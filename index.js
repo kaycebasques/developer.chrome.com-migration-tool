@@ -20,21 +20,17 @@ function init() {
   });
 }
 
-async function download(image) {
-  console.log('download', image);
-  // let name = new URL(image.src).pathname;
-  // name = name.substring(name.lastIndexOf('/') + 1);
-  // return {
-  //   destination: `${destination}${name}`,
-  //   url: image.src
-  // };
-  // const writer = fs.createWriteStream(path);
-  // const response = await axios({
-  //   url,
-  //   method: 'GET',
-  //   responseType: 'stream'
-  // });
-  // response.data.pipe(writer);
+async function download(image, destinationDirectory) {
+  const pathname = new URL(image).pathname;
+  const filename = pathname.substring(pathname.lastIndexOf('/') + 1);
+  const destination = `${destinationDirectory}/${filename}`;
+  const writer = fs.createWriteStream(destination);
+  const response = await axios({
+    url: image,
+    method: 'GET',
+    responseType: 'stream'
+  });
+  response.data.pipe(writer);
 }
 
 async function modify(page) {
@@ -77,7 +73,9 @@ async function migrate(targets) {
     const contentSelector = 'div[itemprop="articleBody"]';
     const html = await page.$eval(contentSelector, element => element.innerHTML);
     const images = await page.$$eval(`${contentSelector} img`, images => images.map(image => image.src));
-    images.forEach(image => download(image));
+    for (let i = 0; i < images.length; i++) {
+      await download(images[i], destination);
+    }
     const turndownService = TurndownService({
       headingStyle: 'atx',
       codeBlockStyle: 'fenced',
