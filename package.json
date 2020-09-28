@@ -1,5 +1,5 @@
 {
-  "name": "developer.chrome.com-migration-tool",
+  "name": "docs-migration-tool",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "puppeteer": "5.2.1"
   },
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "0.20.0",
     "turndown": "6.0.0"
   },
   "engines": {

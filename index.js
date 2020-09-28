@@ -4,19 +4,50 @@ const fs = require('fs');
 const TurndownService = require('turndown');
 const axios = require('axios');
 const outputDirectory = 'output';
+const events = require('events');
 
 function init() {
-  const targets = [];
+  let targets = [];
+  let done = [];
+  let sentinels = {
+    targets: false,
+    done: false
+  };
+  function updateTargets() {
+    const targetsSet = new Set(targets);
+    const doneSet = new Set(done);
+    for (let element of doneSet) {
+      targetsSet.delete(element);
+    }
+    targets = Array.from(targetsSet);
+  }
+  const eventsEmitter = new events.EventEmitter();
+  eventsEmitter.addListener('ready', () => {
+    if (!sentinels.targets || !sentinels.done) return;
+    updateTargets();
+    migrate(targets, done);
+  });
   // TODO(kaycebasques): Delete the old output directory?
   fs.rmdirSync(outputDirectory, {recursive: true});
-  const readInterface = readline.createInterface({
+  const targetsFile = readline.createInterface({
     input: fs.createReadStream('targets.txt')
   });
-  readInterface.on('line', line => {
+  targetsFile.on('line', line => {
     targets.push(line);
   });
-  readInterface.on('close', () => {
-    migrate(targets);
+  targetsFile.on('close', () => {
+    sentinels.targets = true;
+    eventsEmitter.emit('ready');
+  });
+  const doneFile = readline.createInterface({
+    input: fs.createReadStream('done.txt')
+  });
+  doneFile.on('line', line => {
+    done.push(line);
+  });
+  doneFile.on('close', () => {
+    sentinels.done = true;
+    eventsEmitter.emit('ready');
   });
 }
 
@@ -55,12 +86,13 @@ async function cleanup(page) {
   }
 }
 
-async function migrate(targets) {
+async function migrate(targets, done) {
   const browser = await puppeteer.launch({
     headless: false
   });
   const page = await browser.newPage();
-  for (let i = 0; i < 3; i++) {
+  done = `${done.join('\n')}\n`;
+  for (let i = 0; i < targets.length; i++) {
     const target = targets[i];
     const pathname = new URL(target).pathname;
     const destination = `${outputDirectory}${pathname}`;
@@ -83,9 +115,14 @@ async function migrate(targets) {
     });
     const markdown = turndownService.turndown(html);
     fs.writeFileSync(`${destination}/index.md`, markdown);
+    done += `${target}\n`;
+    fs.writeFileSync('done.txt', done);
   }
   await browser.close();
 }
 
-//start();
-init();
+try {
+  init();
+} catch (error) {
+  console.error({error});
+}
