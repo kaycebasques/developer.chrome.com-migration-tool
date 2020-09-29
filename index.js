@@ -5,6 +5,8 @@ const TurndownService = require('turndown');
 const axios = require('axios');
 const outputDirectory = 'output';
 const events = require('events');
+let config;
+let modifications;
 
 function init() {
   let targets = [];
@@ -13,18 +15,25 @@ function init() {
     targets: false,
     done: false
   };
-  function updateTargets() {
+  if (fs.existsSync('./config.json')) {
+    config = require('./config.json');
+  }
+  if (fs.existsSync('./modifications.js')) {
+    // TODO do we need this anymore for any reason?
+  }
+  if (!fs.existsSync('./done.txt')) {
+    fs.writeFileSync('./done.txt', '');
+  }
+  const eventsEmitter = new events.EventEmitter();
+  eventsEmitter.addListener('ready', () => {
+    if (!sentinels.targets || !sentinels.done) return;
+    // Remove the pages that we've already crawled from the list of targets.
     const targetsSet = new Set(targets);
     const doneSet = new Set(done);
     for (let element of doneSet) {
       targetsSet.delete(element);
     }
     targets = Array.from(targetsSet);
-  }
-  const eventsEmitter = new events.EventEmitter();
-  eventsEmitter.addListener('ready', () => {
-    if (!sentinels.targets || !sentinels.done) return;
-    updateTargets();
     migrate(targets, done);
   });
   // TODO(kaycebasques): Delete the old output directory?
@@ -39,6 +48,7 @@ function init() {
     sentinels.targets = true;
     eventsEmitter.emit('ready');
   });
+  // TODO What happens if done.txt doesn't exist?
   const doneFile = readline.createInterface({
     input: fs.createReadStream('done.txt')
   });
@@ -65,21 +75,29 @@ async function download(image, destinationDirectory) {
 }
 
 async function modify(page) {
-  await page.$$eval('pre.prettyprint', targets => {
-    targets.forEach(target => {
-      const code = document.createElement('code');
-      code.innerHTML = target.innerHTML;
-      target.innerHTML = '';
-      target.appendChild(code);
-    });
+  if (!config) return;
+  // TODO check if the proposed functions already exist on the window object
+  // and throw an error if so.
+  await page.addScriptTag({
+    path: './modifications.js'
   });
+  // TODO this logic is convoluted now. Just have the user create their own
+  // modifications in modifications.js?
+  const targets = config.modifications;
+  for (let i = 0; i < targets.length; i++) {
+    const target = targets[i];
+    const name = target.function;
+    await page.$$eval(target.selector, (nodes, name) => {
+      nodes.forEach(node => {
+        window[name](node);
+      });
+    }, name);
+  }
 }
 
 async function cleanup(page) {
-  const selectors = [
-    'nav.inline-toc',
-    'a.permalink'
-  ];
+  if (!config) return;
+  const selectors = config.deletions;
   for (let i = 0; i < selectors.length; i++) {
     const selector = selectors[i];
     await page.$$eval(selector, nodes => nodes.forEach(node => node.remove()));
@@ -87,11 +105,15 @@ async function cleanup(page) {
 }
 
 async function migrate(targets, done) {
+  // TODO get the config if it exists and use its deletion/modification directions
+  //const config = require('./config.json');
   const browser = await puppeteer.launch({
-    headless: false
+    headless: false,
+    devtools: true
   });
   const page = await browser.newPage();
-  done = `${done.join('\n')}\n`;
+  // TODO move to init? And expose page as a global?
+  done = done.length > 0 ? `${done.join('\n')}` : '';
   for (let i = 0; i < targets.length; i++) {
     const target = targets[i];
     const pathname = new URL(target).pathname;
@@ -102,7 +124,8 @@ async function migrate(targets, done) {
     });
     await cleanup(page);
     await modify(page);
-    const contentSelector = 'div[itemprop="articleBody"]';
+    // TODO move to config.json
+    const contentSelector = config.content;
     const html = await page.$eval(contentSelector, element => element.innerHTML);
     const images = await page.$$eval(`${contentSelector} img`, images => images.map(image => image.src));
     for (let i = 0; i < images.length; i++) {

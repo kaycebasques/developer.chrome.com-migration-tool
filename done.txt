@@ -1,11 +1,3 @@
-
 https://developer.chrome.com/extensions
 https://developer.chrome.com/extensions/getstarted
 https://developer.chrome.com/extensions/overview
-https://developer.chrome.com/extensions/manifest
-https://developer.chrome.com/extensions/background_pages
-https://developer.chrome.com/extensions/user_interface
-https://developer.chrome.com/extensions/content_scripts
-https://developer.chrome.com/extensions/permission_warnings
-https://developer.chrome.com/extensions/options
-https://developer.chrome.com/extensions/devguide

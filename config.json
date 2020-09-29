@@ -1,0 +1,13 @@
+{
+  "content": "div[itemprop=\"articleBody\"]",
+  "deletions": [
+    "nav.inline-toc",
+    "a.permalink"
+  ],
+  "modifications": [
+    {
+      "selector": "pre.prettyprint",
+      "function": "fixCodeBlocks"
+    }
+  ]
+}
