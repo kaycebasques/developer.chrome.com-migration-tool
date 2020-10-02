@@ -1,13 +1,9 @@
 {
-  "content": "div[itemprop=\"articleBody\"]",
+  "selector": "div[itemprop=\"articleBody\"]",
   "deletions": [
     "nav.inline-toc",
     "a.permalink"
   ],
-  "modifications": [
-    {
-      "selector": "pre.prettyprint",
-      "function": "fixCodeBlocks"
-    }
-  ]
+  "modifications": "modifications/dcc.js",
+  "history": false
 }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "migrate": "node index.js"
+    "convert": "node index.js"
   },
   "devDependencies": {
     "puppeteer": "5.2.1"

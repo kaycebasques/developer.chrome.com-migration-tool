@@ -6,7 +6,6 @@ const axios = require('axios');
 const outputDirectory = 'output';
 const events = require('events');
 let config;
-let modifications;
 
 function init() {
   let targets = [];
@@ -18,15 +17,15 @@ function init() {
   if (fs.existsSync('./config.json')) {
     config = require('./config.json');
   }
-  if (fs.existsSync('./modifications.js')) {
-    // TODO do we need this anymore for any reason?
-  }
-  if (!fs.existsSync('./done.txt')) {
+  if (config.history && !fs.existsSync('./done.txt')) {
     fs.writeFileSync('./done.txt', '');
   }
   const eventsEmitter = new events.EventEmitter();
   eventsEmitter.addListener('ready', () => {
-    if (!sentinels.targets || !sentinels.done) return;
+    // User has indicated that they want to record progress but we're not yet done
+    // reading the done.txt file, so there's no work to do yet.
+    if (config.history && !sentinels.done) return;
+    if (!sentinels.targets) return;
     // Remove the pages that we've already crawled from the list of targets.
     const targetsSet = new Set(targets);
     const doneSet = new Set(done);
@@ -36,7 +35,8 @@ function init() {
     targets = Array.from(targetsSet);
     migrate(targets, done);
   });
-  // TODO(kaycebasques): Delete the old output directory?
+  // TODO(kaycebasques): How do we handle this when the user has indicated that
+  // they want to save progress? Should we not delete the output directory?
   fs.rmdirSync(outputDirectory, {recursive: true});
   const targetsFile = readline.createInterface({
     input: fs.createReadStream('targets.txt')
@@ -48,17 +48,19 @@ function init() {
     sentinels.targets = true;
     eventsEmitter.emit('ready');
   });
-  // TODO What happens if done.txt doesn't exist?
-  const doneFile = readline.createInterface({
-    input: fs.createReadStream('done.txt')
-  });
-  doneFile.on('line', line => {
-    done.push(line);
-  });
-  doneFile.on('close', () => {
-    sentinels.done = true;
-    eventsEmitter.emit('ready');
-  });
+  let doneFile;
+  if (config.history) {
+    donefile = readline.createInterface({
+      input: fs.createReadStream('done.txt')
+    });
+    doneFile.on('line', line => {
+      done.push(line);
+    });
+    doneFile.on('close', () => {
+      sentinels.done = true;
+      eventsEmitter.emit('ready');
+    });
+  }
 }
 
 async function download(image, destinationDirectory) {
@@ -75,28 +77,14 @@ async function download(image, destinationDirectory) {
 }
 
 async function modify(page) {
-  if (!config) return;
-  // TODO check if the proposed functions already exist on the window object
-  // and throw an error if so.
+  if (!config || !config.modifications || !fs.existsSync(config.modifications)) return;
   await page.addScriptTag({
-    path: './modifications.js'
+    path: config.modifications
   });
-  // TODO this logic is convoluted now. Just have the user create their own
-  // modifications in modifications.js?
-  const targets = config.modifications;
-  for (let i = 0; i < targets.length; i++) {
-    const target = targets[i];
-    const name = target.function;
-    await page.$$eval(target.selector, (nodes, name) => {
-      nodes.forEach(node => {
-        window[name](node);
-      });
-    }, name);
-  }
 }
 
 async function cleanup(page) {
-  if (!config) return;
+  if (!config || !config.deletions) return;
   const selectors = config.deletions;
   for (let i = 0; i < selectors.length; i++) {
     const selector = selectors[i];
@@ -125,7 +113,7 @@ async function migrate(targets, done) {
     await cleanup(page);
     await modify(page);
     // TODO move to config.json
-    const contentSelector = config.content;
+    const contentSelector = config.selector;
     const html = await page.$eval(contentSelector, element => element.innerHTML);
     const images = await page.$$eval(`${contentSelector} img`, images => images.map(image => image.src));
     for (let i = 0; i < images.length; i++) {
@@ -139,7 +127,7 @@ async function migrate(targets, done) {
     const markdown = turndownService.turndown(html);
     fs.writeFileSync(`${destination}/index.md`, markdown);
     done += `${target}\n`;
-    fs.writeFileSync('done.txt', done);
+    if (config.history) fs.writeFileSync('done.txt', done);
   }
   await browser.close();
 }
