@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "convert": "node index.js"
+    "convert": "node index.js;",
+    "webfu": "cp configs/webfu.json config.json; npm run convert;",
+    "dcc": "cp configs/dcc.json config.json; npm run convert;"
   },
   "devDependencies": {
     "puppeteer": "5.2.1"
