@@ -4,7 +4,9 @@
     "devsite-tracking-question",
     "div.devsite-banner",
     "devsite-toc",
-    "div.devsite-article-meta"
+    "div.devsite-article-meta",
+    "section.wf-byline",
+    "style"
   ],
   "modifications": "modifications/webfu.js",
   "history": false
