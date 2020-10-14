@@ -1,5 +1,10 @@
 {
-  "selector": "article.devsite-article",
+  "selectors": {
+    "main": "article.devsite-article",
+    "title": "h1.devsite-page-title",
+    "date": "#docs-migration-tool-date",
+    "update": "#docs-migration-tool-update"
+  },
   "deletions": [
     "devsite-tracking-question",
     "div.devsite-banner",

@@ -1,5 +1,7 @@
 {
-  "selector": "div[itemprop=\"articleBody\"]",
+  "selectors": {
+    "main": "div[itemprop=\"articleBody\"]"
+  },
   "deletions": [
     "nav.inline-toc",
     "a.permalink"

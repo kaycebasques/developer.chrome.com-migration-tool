@@ -5,6 +5,7 @@ const TurndownService = require('turndown');
 const axios = require('axios');
 const outputDirectory = 'output';
 const events = require('events');
+const prettier = require('prettier');
 let config;
 
 function init() {
@@ -103,18 +104,38 @@ async function migrate(targets, done) {
   // TODO move to init? And expose page as a global?
   done = done.length > 0 ? `${done.join('\n')}` : '';
   for (let i = 0; i < targets.length; i++) {
+    let frontmatter = '---\n';
     const target = targets[i];
     const pathname = new URL(target).pathname;
     const destination = `${outputDirectory}${pathname}`;
     fs.mkdirSync(destination, {recursive: true});
     await page.goto(target, {
-      waitUntil: 'networkidle2'
+      waitUntil: 'networkidle0'
     });
     await cleanup(page);
     await modify(page);
     // TODO move to config.json
-    const contentSelector = config.selector;
+    const contentSelector = config.selectors.main;
     const html = await page.$eval(contentSelector, element => element.innerHTML);
+    if (config.selectors.title) {
+      const title = await page.$eval(config.selectors.title, element => element.textContent);
+      frontmatter += `title: ${title}\n`;
+    }
+    if (config.selectors.date) {
+      // Added this because in the case of developers.google.com/web, we do a network request
+      // to fetch the creation date and insert that information into the page.
+      // TODO(kaycebasques): Just loop through all user-provided selectors and wait for them all?
+      await page.waitForSelector(config.selectors.date);
+      const date = await page.$eval(config.selectors.date, element => element.textContent);
+      frontmatter += `date: ${date}\n`;
+    }
+    if (config.selectors.update) {
+      await page.waitForSelector(config.selectors.update);
+      const update = await page.$eval(config.selectors.update, element => element.textContent);
+      frontmatter += `updated: ${update}\n`;
+    }
+    const description = await page.$eval('meta[name="description"]', element => element.content);
+    frontmatter += `description: ${description}\n`;
     const images = await page.$$eval(`${contentSelector} img`, images => images.map(image => image.src));
     for (let i = 0; i < images.length; i++) {
       await download(images[i], destination);
@@ -125,7 +146,18 @@ async function migrate(targets, done) {
       linkStyle: 'referenced'
     });
     const markdown = turndownService.turndown(html);
-    fs.writeFileSync(`${destination}/index.md`, markdown);
+    frontmatter += 
+        'authors: TODO\n' +
+        'date: TODO\n' +
+        'tags:\n  - TODO\n' +
+        '---\n\n';
+    const output = `${frontmatter}${markdown}`;
+    const formattedOutput = prettier.format(output, { 
+      parser: 'markdown', 
+      proseWrap: 'always',
+      printWidth: 100
+    });
+    fs.writeFileSync(`${destination}/index.md`, formattedOutput);
     done += `${target}\n`;
     if (config.history) fs.writeFileSync('done.txt', done);
   }
