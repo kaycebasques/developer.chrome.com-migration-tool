@@ -1,6 +1,7 @@
 {
   "selectors": {
-    "main": "div[itemprop=\"articleBody\"]"
+    "main": "div[itemprop=\"articleBody\"]",
+    "title": "h1"
   },
   "deletions": [
     "nav.inline-toc",

@@ -134,8 +134,12 @@ async function migrate(targets, done) {
       const update = await page.$eval(config.selectors.update, element => element.textContent);
       frontmatter += `updated: ${update}\n`;
     }
-    const description = await page.$eval('meta[name="description"]', element => element.content);
-    frontmatter += `description: ${description}\n`;
+    try {
+      const description = await page.$eval('meta[name="description"]', element => element.content);
+      frontmatter += `description: ${description}\n`;
+    } catch (error) {
+      console.error('Description element not found.');
+    }
     const images = await page.$$eval(`${contentSelector} img`, images => images.map(image => image.src));
     for (let i = 0; i < images.length; i++) {
       await download(images[i], destination);
@@ -143,7 +147,7 @@ async function migrate(targets, done) {
     const turndownService = TurndownService({
       headingStyle: 'atx',
       codeBlockStyle: 'fenced',
-      linkStyle: 'referenced'
+      linkStyle: 'collapsed'
     });
     const markdown = turndownService.turndown(html);
     frontmatter += 

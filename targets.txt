@@ -1,2 +1,1 @@
-https://developers.google.com/web/tools/chrome-devtools/webauthn
-https://developers.google.com/web/fundamentals/media/video
+https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web

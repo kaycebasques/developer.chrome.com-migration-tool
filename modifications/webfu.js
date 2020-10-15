@@ -1,4 +1,13 @@
 (async () => {
+  // TODO(kaycebasques): Note code blocks that have highlighting (which needs to be manually fixed)
+  // Fix code blocks.
+  document.querySelectorAll('devsite-code').forEach(block => {
+    const pre = block.querySelector('pre');
+    pre.innerHTML = pre.innerHTML.replace(/<br>/g, '\n');
+    block.insertAdjacentElement('afterend', pre);
+    block.remove();
+  });
+  // Get dates.
   const base = 'https://raw.githubusercontent.com/google/WebFundamentals/master/src/content/en/'
   const path = window.location.pathname.replace('/web/', '');
   let response = await fetch(`${base}${path}.md`);
@@ -11,7 +20,7 @@
   const dateNode = document.createElement('p');
   dateNode.id = 'docs-migration-tool-date';
   dateNode.textContent = dateValue;
-  document.querySelector('h1').insertAdjacentElement('afterend', dateNode);
+  document.body.appendChild(dateNode);
   // Get the last update.
   const updateStart = text.search(/wf_updated_on:/);
   const updateEnd = text.substring(updateStart).search(/\s+#}/);
@@ -19,5 +28,5 @@
   const updateNode = document.createElement('p');
   updateNode.id = 'docs-migration-tool-update';
   updateNode.textContent = updateValue;
-  document.querySelector('h1').insertAdjacentElement('afterend', updateNode);
+  document.body.appendChild(updateNode);
 })();
