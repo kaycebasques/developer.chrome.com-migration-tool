@@ -1,18 +1,12 @@
 {
   "selectors": {
-    "main": "article.devsite-article",
-    "title": "h1.devsite-page-title",
-    "date": "#docs-migration-tool-date",
-    "update": "#docs-migration-tool-update"
+    "main": "div[itemprop=\"articleBody\"]",
+    "title": "h1"
   },
   "deletions": [
-    "devsite-tracking-question",
-    "div.devsite-banner",
-    "devsite-toc",
-    "div.devsite-article-meta",
-    "section.wf-byline",
-    "style"
+    "nav.inline-toc",
+    "a.permalink"
   ],
-  "modifications": "modifications/webfu.js",
+  "modifications": "modifications/dcc.js",
   "history": false
 }

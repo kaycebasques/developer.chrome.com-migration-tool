@@ -98,7 +98,7 @@ async function migrate(targets, done) {
   //const config = require('./config.json');
   const browser = await puppeteer.launch({
     headless: false,
-    devtools: true
+    // devtools: true
   });
   const page = await browser.newPage();
   // TODO move to init? And expose page as a global?
@@ -116,7 +116,13 @@ async function migrate(targets, done) {
     await modify(page);
     // TODO move to config.json
     const contentSelector = config.selectors.main;
-    const html = await page.$eval(contentSelector, element => element.innerHTML);
+    let html;
+    try {
+      html = await page.$eval(contentSelector, element => element.innerHTML);
+    } catch (error) {
+      console.error('Main selector not found.');
+      continue;
+    }
     if (config.selectors.title) {
       const title = await page.$eval(config.selectors.title, element => element.textContent);
       frontmatter += `title: ${title}\n`;
@@ -134,6 +140,12 @@ async function migrate(targets, done) {
       const update = await page.$eval(config.selectors.update, element => element.textContent);
       frontmatter += `updated: ${update}\n`;
     }
+    if (config.selectors.authors) {
+      await page.waitForSelector(config.selectors.authors);
+      const authors = await page.$$eval(config.selectors.authors, nodes => nodes.map(node => node.textContent));
+      console.log({authors});
+      // frontmatter += `updated: ${update}\n`;
+    }
     try {
       const description = await page.$eval('meta[name="description"]', element => element.content);
       frontmatter += `description: ${description}\n`;
@@ -147,7 +159,8 @@ async function migrate(targets, done) {
     const turndownService = TurndownService({
       headingStyle: 'atx',
       codeBlockStyle: 'fenced',
-      linkStyle: 'collapsed'
+      linkStyle: 'referenced',
+      linkReferenceStyle: 'full'
     });
     const markdown = turndownService.turndown(html);
     frontmatter += 

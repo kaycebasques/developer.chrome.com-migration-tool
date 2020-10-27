@@ -1,1 +1,14 @@
-https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web
+https://developer.chrome.com/multidevice/
+https://developer.chrome.com/multidevice/android/customtabs
+https://developer.chrome.com/multidevice/android/installtohomescreen
+https://developer.chrome.com/multidevice/android/intents
+https://developer.chrome.com/multidevice/android/overview
+https://developer.chrome.com/multidevice/faq
+https://developer.chrome.com/multidevice/ios/links
+https://developer.chrome.com/multidevice/user-agent
+https://developer.chrome.com/multidevice/webview/gettingstarted
+https://developer.chrome.com/multidevice/webview/overview
+https://developer.chrome.com/multidevice/webview/pixelperfect
+https://developer.chrome.com/multidevice/webview/tipsandtricks
+https://developer.chrome.com/multidevice/webview/user-agent
+https://developer.chrome.com/multidevice/webview/workflow

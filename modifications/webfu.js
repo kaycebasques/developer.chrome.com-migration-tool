@@ -4,6 +4,7 @@
   document.querySelectorAll('devsite-code').forEach(block => {
     const pre = block.querySelector('pre');
     pre.innerHTML = pre.innerHTML.replace(/<br>/g, '\n');
+    pre.innerHTML = pre.innerHTML.replace(/<strong\/?>/g, '');
     block.insertAdjacentElement('afterend', pre);
     block.remove();
   });
@@ -29,4 +30,15 @@
   updateNode.id = 'docs-migration-tool-update';
   updateNode.textContent = updateValue;
   document.body.appendChild(updateNode);
+  // Get authors.
+  const authors = [].slice.call(document.querySelectorAll('section.wf-byline img'));
+  authors.forEach(author => {
+    let name = author.img.substring(author.img.lastIndexOf('/'));
+    name.replace('.jpg', '');
+    name.replace('.png', '');
+    const p = document.createElement('p');
+    p.textContent = name;
+    p.classList.add('docs-migration-tool-author');
+    document.body.appendChild(p);
+  });
 })();
