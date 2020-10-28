@@ -41,4 +41,5 @@
     p.classList.add('docs-migration-tool-author');
     document.body.appendChild(p);
   });
+  window.modificationsDone = true;
 })();

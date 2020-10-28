@@ -104,7 +104,10 @@ async function migrate(targets, done) {
   // TODO move to init? And expose page as a global?
   done = done.length > 0 ? `${done.join('\n')}` : '';
   for (let i = 0; i < targets.length; i++) {
-    let frontmatter = '---\n';
+    let frontmatter = 
+        '---\n' +
+        // TODO(kaycebasques): Need to configure this because it's DCC-specific.
+        `layout: 'layouts/doc-post.njk'\n`;
     const target = targets[i];
     const pathname = new URL(target).pathname;
     const destination = `${outputDirectory}${pathname}`;
@@ -134,6 +137,8 @@ async function migrate(targets, done) {
       await page.waitForSelector(config.selectors.date);
       const date = await page.$eval(config.selectors.date, element => element.textContent);
       frontmatter += `date: ${date}\n`;
+    } else {
+      frontmatter += `date: ${new Date().toISOString().split('T')[0]}\n`;
     }
     if (config.selectors.update) {
       await page.waitForSelector(config.selectors.update);
@@ -164,9 +169,7 @@ async function migrate(targets, done) {
     });
     const markdown = turndownService.turndown(html);
     frontmatter += 
-        'authors: TODO\n' +
-        'date: TODO\n' +
-        'tags:\n  - TODO\n' +
+        'description: TODO\n' +
         '---\n\n';
     const output = `${frontmatter}${markdown}`;
     const formattedOutput = prettier.format(output, { 

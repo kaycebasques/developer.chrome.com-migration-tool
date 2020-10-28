@@ -5,7 +5,8 @@
   },
   "deletions": [
     "nav.inline-toc",
-    "a.permalink"
+    "a.permalink",
+    "style"
   ],
   "modifications": "modifications/dcc.js",
   "history": false
