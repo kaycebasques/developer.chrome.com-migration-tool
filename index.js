@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const TurndownService = require('turndown');
 const axios = require('axios');
-const outputDirectory = 'output';
+let outputDirectory = 'output';
 const events = require('events');
 const prettier = require('prettier');
 let config;
@@ -36,9 +36,10 @@ function init() {
     targets = Array.from(targetsSet);
     migrate(targets, done);
   });
+  if (config.output) outputDirectory = config.output;
   // TODO(kaycebasques): How do we handle this when the user has indicated that
   // they want to save progress? Should we not delete the output directory?
-  fs.rmdirSync(outputDirectory, {recursive: true});
+  // fs.rmdirSync(outputDirectory, {recursive: true});
   const targetsFile = readline.createInterface({
     input: fs.createReadStream('targets.txt')
   });

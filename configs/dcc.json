@@ -6,8 +6,10 @@
   "deletions": [
     "nav.inline-toc",
     "a.permalink",
-    "style"
+    "style",
+    "footer"
   ],
   "modifications": "modifications/dcc.js",
-  "history": false
+  "history": false,
+  "output": "/Users/kayce/Repositories/developers.chrome.com/site/en/docs"
 }

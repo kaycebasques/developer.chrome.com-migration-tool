@@ -14,5 +14,6 @@
     "style"
   ],
   "modifications": "modifications/webfu.js",
-  "history": false
+  "history": false,
+  "output": "/Users/kayce/Desktop"
 }
