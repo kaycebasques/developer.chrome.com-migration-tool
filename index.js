@@ -113,9 +113,14 @@ async function migrate(targets, done) {
     const pathname = new URL(target).pathname;
     const destination = `${outputDirectory}${pathname}`;
     fs.mkdirSync(destination, {recursive: true});
-    await page.goto(target, {
-      waitUntil: 'networkidle0'
-    });
+    try {
+      await page.goto(target, {
+        waitUntil: 'networkidle0'
+      });
+    } catch (error) {
+      console.error(`Error visiting ${target}`);
+      continue;
+    }
     await cleanup(page);
     await modify(page);
     // TODO move to config.json
@@ -139,7 +144,7 @@ async function migrate(targets, done) {
       const date = await page.$eval(config.selectors.date, element => element.textContent);
       frontmatter += `date: ${date}\n`;
     } else {
-      frontmatter += `date: ${new Date().toISOString().split('T')[0]}\n`;
+      frontmatter += `#date: TODO\n`;
     }
     if (config.selectors.update) {
       await page.waitForSelector(config.selectors.update);
