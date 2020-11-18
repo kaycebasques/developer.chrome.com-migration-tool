@@ -34,3 +34,20 @@ for (let i = 0; i < badCodeLinks.length; i++) {
   div.innerHTML = item.innerHTML;
   item.replaceWith(div);
 });
+// Flag images
+[].slice.call(document.querySelectorAll('img')).forEach(img => {
+  const p = document.createElement('p');
+  p.textContent = 'TODO convert image';
+  img.insertAdjacentElement('beforebegin', p);
+});
+// Flag definition lists
+// Note: these flags can be configurable. Specify whether you just need before or after
+// LEt them provide the description
+[].slice.call(document.querySelectorAll('dl')).forEach(dl => {
+  const p1 = document.createElement('p');
+  p1.textContent = 'TODO clean up definition list';
+  dl.insertAdjacentElement('beforebegin', p1);
+  const p2 = document.createElement('p');
+  p2.textContent = 'TODO end of definition list';
+  dl.insertAdjacentElement('afterend', p1);
+});
