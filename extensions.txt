@@ -67,11 +67,9 @@ https://developer.chrome.com/extensions/optionsV2
 https://developer.chrome.com/extensions/override
 https://developer.chrome.com/extensions/overview
 https://developer.chrome.com/extensions/packaging
-https://developer.chrome.com/extensions/performance
 https://developer.chrome.com/extensions/permission_warnings
 https://developer.chrome.com/extensions/publish_app
 https://developer.chrome.com/extensions/richNotifications
-https://developer.chrome.com/extensions/samples
 https://developer.chrome.com/extensions/sandboxingEval
 https://developer.chrome.com/extensions/security
 https://developer.chrome.com/extensions/settings_override
@@ -83,5 +81,4 @@ https://developer.chrome.com/extensions/tut_debugging
 https://developer.chrome.com/extensions/tut_oauth
 https://developer.chrome.com/extensions/user_interface
 https://developer.chrome.com/extensions/user_privacy
-https://developer.chrome.com/extensions/whats_new
 https://developer.chrome.com/extensions/xhr
