@@ -168,6 +168,55 @@ async function migrate(targets, done) {
       linkStyle: 'referenced',
       linkReferenceStyle: 'full'
     });
+    turndownService.keep(['table']);
+    // TODO(kaycebasques): Refactor this DCC-specific code.
+    turndownService.keep(node => {
+      return node.nodeName === 'DIV' && node.classList.contains('aside--note');
+    });
+    turndownService.keep(node => {
+      return node.nodeName === 'DIV' && node.classList.contains('aside--caution');
+    });
+    // Not working. Can't get a newline after first !!! characters.
+    // turndownService.addRule('notes', {
+    //   filter: node => {
+    //     return node.nodeName === 'P' && node.classList.contains('note');
+    //   },
+    //   replacement: (content, node) => {
+    //     return `!!!.aside.aside--note\n${content}\n!!!\n\n`
+    //   }
+    // });
+    turndownService.addRule('h2', {
+      filter: node => {
+        return node.nodeName === 'H2' && node.hasAttribute('id');
+      },
+      replacement: (content, node) => {
+        return `## ${content} {: #${node.id} }`;
+      }
+    });
+    turndownService.addRule('h3', {
+      filter: node => {
+        return node.nodeName === 'H3' && node.hasAttribute('id');
+      },
+      replacement: (content, node) => {
+        return `### ${content} {: #${node.id} }`;
+      }
+    });
+    turndownService.addRule('h4', {
+      filter: node => {
+        return node.nodeName === 'H4' && node.hasAttribute('id');
+      },
+      replacement: (content, node) => {
+        return `#### ${content} {: #${node.id} }`;
+      }
+    });
+    turndownService.addRule('h5', {
+      filter: node => {
+        return node.nodeName === 'H5' && node.hasAttribute('id');
+      },
+      replacement: (content, node) => {
+        return `##### ${content} {: #${node.id} }`;
+      }
+    });
     const markdown = turndownService.turndown(html);
     frontmatter += 
         'description: TODO\n' +

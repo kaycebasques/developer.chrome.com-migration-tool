@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 https://developer.chrome.com/webstore/
 https://developer.chrome.com/webstore/about_webstore
 https://developer.chrome.com/webstore/api_
@@ -27,6 +28,9 @@ https://developer.chrome.com/webstore/one_time_payments
 https://developer.chrome.com/webstore/overview
 https://developer.chrome.com/webstore/payments-iap
 https://developer.chrome.com/webstore/payments-otp
+=======
+https://developer.chrome.com/webstore/payments-iap
+>>>>>>> 80e9c4f (add DCC logic to convert section IDs and admonitions)
 https://developer.chrome.com/webstore/pricing
 https://developer.chrome.com/webstore/program_policies
 https://developer.chrome.com/webstore/publish
@@ -35,5 +39,9 @@ https://developer.chrome.com/webstore/register
 https://developer.chrome.com/webstore/samples
 https://developer.chrome.com/webstore/spam-faq
 https://developer.chrome.com/webstore/terms
+<<<<<<< HEAD
 https://developer.chrome.com/webstore/update
 https://developer.chrome.com/webstore/user_data
+=======
+https://developer.chrome.com/webstore/update
+>>>>>>> 80e9c4f (add DCC logic to convert section IDs and admonitions)

@@ -18,3 +18,19 @@ for (let i = 0; i < badCodeLinks.length; i++) {
   a.appendChild(code);
   target.parentNode.parentNode.replaceChild(a, target.parentNode);
 }
+// Convert note elements
+[].slice.call(document.querySelectorAll('p.note')).forEach(note => {
+  const div = document.createElement('div');
+  div.classList.add('aside');
+  div.classList.add('aside--note');
+  div.innerHTML = note.innerHTML;
+  note.replaceWith(div);
+});
+// Convert caution elements
+[].slice.call(document.querySelectorAll('p.caution')).forEach(item => {
+  const div = document.createElement('div');
+  div.classList.add('aside');
+  div.classList.add('aside--caution');
+  div.innerHTML = item.innerHTML;
+  item.replaceWith(div);
+});
