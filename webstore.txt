@@ -1,0 +1,10 @@
+https://developer.chrome.com/webstore/payments-iap
+https://developer.chrome.com/webstore/pricing
+https://developer.chrome.com/webstore/program_policies
+https://developer.chrome.com/webstore/publish
+https://developer.chrome.com/webstore/rating
+https://developer.chrome.com/webstore/register
+https://developer.chrome.com/webstore/samples
+https://developer.chrome.com/webstore/spam-faq
+https://developer.chrome.com/webstore/terms
+https://developer.chrome.com/webstore/update
