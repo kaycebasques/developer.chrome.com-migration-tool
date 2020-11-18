@@ -129,7 +129,7 @@ async function migrate(targets, done) {
     }
     if (config.selectors.title) {
       const title = await page.$eval(config.selectors.title, element => element.textContent);
-      frontmatter += `title: ${title}\n`;
+      frontmatter += `title: "${title}"\n`;
     }
     if (config.selectors.date) {
       // Added this because in the case of developers.google.com/web, we do a network request
