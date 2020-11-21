@@ -150,6 +150,8 @@ async function migrate(targets, done) {
       await page.waitForSelector(config.selectors.update);
       const update = await page.$eval(config.selectors.update, element => element.textContent);
       frontmatter += `updated: ${update}\n`;
+    } else {
+      frontmatter += `#updated: TODO\n`;
     }
     if (config.selectors.authors) {
       await page.waitForSelector(config.selectors.authors);
