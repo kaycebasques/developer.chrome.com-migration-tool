@@ -224,6 +224,22 @@ async function migrate(targets, done) {
         return `##### ${content} {: #${node.id} }`;
       }
     });
+    turndownService.addRule('dt', {
+      filter: node => {
+        return node.nodeName === 'DT'
+      },
+      replacement: content => {
+        return content;
+      }
+    });
+    turndownService.addRule('dd', {
+      filter: node => {
+        return node.nodeName === 'DD'
+      },
+      replacement: content => {
+        return `: ${content}`;
+      }
+    });
     const markdown = turndownService.turndown(html);
     frontmatter += 
         'description: TODO\n' +
