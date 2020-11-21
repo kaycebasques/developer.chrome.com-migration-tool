@@ -40,9 +40,9 @@ for (let i = 0; i < badCodeLinks.length; i++) {
   p.textContent = 'TODO convert image';
   img.insertAdjacentElement('beforebegin', p);
 });
-Flag definition lists
-Note: these flags can be configurable. Specify whether you just need before or after
-LEt them provide the description
+// Flag definition lists
+// Note: these flags can be configurable. Specify whether you just need before or after
+// LEt them provide the description
 [].slice.call(document.querySelectorAll('dl')).forEach(dl => {
   const p1 = document.createElement('p');
   p1.textContent = 'TODO clean up definition list';
