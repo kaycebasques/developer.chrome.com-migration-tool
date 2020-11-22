@@ -69,13 +69,18 @@ async function download(image, destinationDirectory) {
   const pathname = new URL(image).pathname;
   const filename = pathname.substring(pathname.lastIndexOf('/') + 1);
   const destination = `${destinationDirectory}/${filename}`;
-  const writer = fs.createWriteStream(destination);
-  const response = await axios({
-    url: image,
-    method: 'GET',
-    responseType: 'stream'
-  });
-  response.data.pipe(writer);
+  try {
+    const response = await axios({
+      url: image,
+      method: 'GET',
+      responseType: 'stream'
+    });
+    const writer = fs.createWriteStream(destination);
+    response.data.pipe(writer);
+  } catch (error) {
+    console.error(`Error while attempting to download ${image}`);
+    return null;
+  }
 }
 
 async function modify(page) {
