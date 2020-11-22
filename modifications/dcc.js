@@ -49,5 +49,5 @@ for (let i = 0; i < badCodeLinks.length; i++) {
   dl.insertAdjacentElement('beforebegin', p1);
   const p2 = document.createElement('p');
   p2.textContent = 'TODO end of definition list';
-  dl.insertAdjacentElement('afterend', p1);
+  dl.insertAdjacentElement('afterend', p2);
 });
