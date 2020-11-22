@@ -1,1 +1,1 @@
-https://developer.chrome.com/webstore/program_policies
+https://developer.chrome.com/webstore/user_data
