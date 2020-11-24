@@ -34,6 +34,14 @@ for (let i = 0; i < badCodeLinks.length; i++) {
   div.innerHTML = item.innerHTML;
   item.replaceWith(div);
 });
+// Convert warning elements
+[].slice.call(document.querySelectorAll('p.warning')).forEach(item => {
+  const div = document.createElement('div');
+  div.classList.add('aside');
+  div.classList.add('aside--warning');
+  div.innerHTML = item.innerHTML;
+  item.replaceWith(div);
+});
 // Flag images
 [].slice.call(document.querySelectorAll('img')).forEach(img => {
   const p = document.createElement('p');

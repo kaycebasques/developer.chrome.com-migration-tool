@@ -188,6 +188,9 @@ async function migrate(targets, done) {
     turndownService.keep(node => {
       return node.nodeName === 'DIV' && node.classList.contains('aside--caution');
     });
+    turndownService.keep(node => {
+      return node.nodeName === 'DIV' && node.classList.contains('aside--warning');
+    });
     // Not working. Can't get a newline after first !!! characters.
     // turndownService.addRule('notes', {
     //   filter: node => {
