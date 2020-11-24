@@ -1,6 +1,6 @@
 {
   "selectors": {
-    "main": "div[itemprop=\"articleBody\"]",
+    "main": ".intro + section:not([id])",
     "title": "h1"
   },
   "deletions": [
@@ -12,5 +12,6 @@
   ],
   "modifications": "modifications/dcc.js",
   "history": false,
-  "output": "/Users/kayce/Repositories/developers.chrome.com/site/en/docs"
+  "output": "/Users/kayce/Repositories/developers.chrome.com/site/en/docs/extensions/reference/_apis",
+  "frontmatter": false
 }

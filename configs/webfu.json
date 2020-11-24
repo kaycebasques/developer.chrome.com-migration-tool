@@ -3,7 +3,8 @@
     "main": "article.devsite-article",
     "title": "h1.devsite-page-title",
     "date": "#docs-migration-tool-date",
-    "update": "#docs-migration-tool-update"
+    "update": "#docs-migration-tool-update",
+    "description": "meta[name=\"description\"]"
   },
   "deletions": [
     "devsite-tracking-question",

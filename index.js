@@ -115,9 +115,10 @@ async function migrate(targets, done) {
         // TODO(kaycebasques): Need to configure this because it's DCC-specific.
         `layout: 'layouts/doc-post.njk'\n`;
     const target = targets[i];
+    console.info(`Scraping ${target}`);
     const pathname = new URL(target).pathname;
-    const destination = `${outputDirectory}${pathname}`;
-    fs.mkdirSync(destination, {recursive: true});
+    // const destination = `${outputDirectory}${pathname}`;
+    // fs.mkdirSync(destination, {recursive: true});
     try {
       await page.goto(target, {
         waitUntil: 'networkidle0'
@@ -164,12 +165,24 @@ async function migrate(targets, done) {
       console.log({authors});
       // frontmatter += `updated: ${update}\n`;
     }
-    try {
-      const description = await page.$eval('meta[name="description"]', element => element.content);
-      frontmatter += `description: ${description}\n`;
-    } catch (error) {
-      console.error('Description element not found.');
+    if (config.selectors.description) {
+      try {
+        await page.waitForSelector(config.selectors.description);
+        const description = await page.$eval(config.selectors.description, element => element.textContent);
+        frontmatter += `updated: ${description}\n`;
+      } catch (error) {
+        console.error('Description element not found.');
+        frontmatter += `#description: TODO\n`;
+      }
     }
+    // try {
+    //   const description = await page.$eval('meta[name="description"]', element => element.content);
+    //   frontmatter += `description: ${description}\n`;
+    // } catch (error) {
+    //   console.error('Description element not found.');
+    // }
+    const destination = `${outputDirectory}${pathname}`;
+    fs.mkdirSync(destination, {recursive: true});
     const images = await page.$$eval(`${contentSelector} img`, images => images.map(image => image.src));
     for (let i = 0; i < images.length; i++) {
       await download(images[i], destination);
@@ -182,24 +195,40 @@ async function migrate(targets, done) {
     });
     turndownService.keep(['table']);
     // TODO(kaycebasques): Refactor this DCC-specific code.
-    turndownService.keep(node => {
-      return node.nodeName === 'DIV' && node.classList.contains('aside--note');
-    });
-    turndownService.keep(node => {
-      return node.nodeName === 'DIV' && node.classList.contains('aside--caution');
-    });
-    turndownService.keep(node => {
-      return node.nodeName === 'DIV' && node.classList.contains('aside--warning');
-    });
-    // Not working. Can't get a newline after first !!! characters.
-    // turndownService.addRule('notes', {
-    //   filter: node => {
-    //     return node.nodeName === 'P' && node.classList.contains('note');
-    //   },
-    //   replacement: (content, node) => {
-    //     return `!!!.aside.aside--note\n${content}\n!!!\n\n`
-    //   }
+    // turndownService.keep(node => {
+    //   return node.nodeName === 'DIV' && node.classList.contains('aside--note');
     // });
+    // turndownService.keep(node => {
+    //   return node.nodeName === 'DIV' && node.classList.contains('aside--caution');
+    // });
+    // turndownService.keep(node => {
+    //   return node.nodeName === 'DIV' && node.classList.contains('aside--warning');
+    // });
+    // Not working. Can't get a newline after first !!! characters.
+    turndownService.addRule('notes', {
+      filter: node => {
+        return node.nodeName === 'P' && node.classList.contains('note');
+      },
+      replacement: (content, node) => {
+        return `!!!.aside.aside--note\n\n${content}\n\n!!!\n\n`
+      }
+    });
+    turndownService.addRule('cautions', {
+      filter: node => {
+        return node.nodeName === 'P' && node.classList.contains('caution');
+      },
+      replacement: (content, node) => {
+        return `!!!.aside.aside--caution\n\n${content}\n\n!!!\n\n`
+      }
+    });
+    turndownService.addRule('warnings', {
+      filter: node => {
+        return node.nodeName === 'P' && node.classList.contains('warning');
+      },
+      replacement: (content, node) => {
+        return `!!!.aside.aside--warning\n\n${content}\n\n!!!\n\n`
+      }
+    });
     turndownService.addRule('h2', {
       filter: node => {
         return node.nodeName === 'H2' && node.hasAttribute('id');
@@ -245,10 +274,9 @@ async function migrate(targets, done) {
     //   }
     // });
     const markdown = turndownService.turndown(html);
-    frontmatter += 
-        'description: TODO\n' +
-        '---\n\n';
-    const output = `${frontmatter}${markdown}`;
+    frontmatter += '---\n\n';
+    let output = `${markdown}`;
+    if (config.frontmatter) output = `${frontmatter}${output}`; 
     const formattedOutput = prettier.format(output, { 
       parser: 'markdown', 
       proseWrap: 'always',
