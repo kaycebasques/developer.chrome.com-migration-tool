@@ -120,10 +120,14 @@ async function migrate(targets, done) {
     // const destination = `${outputDirectory}${pathname}`;
     // fs.mkdirSync(destination, {recursive: true});
     try {
-      await page.goto(target, {
-        waitUntil: 'networkidle0',
-        timeout: 0
+      const response = await page.goto(target, {
+        waitUntil: 'networkidle0'
       });
+      const status = response.status();
+      if (status >= 300 || status < 400) {
+        console.info('Redirection detected… skipping');
+        continue;
+      }
     } catch (error) {
       console.error(`Error visiting ${target}`);
       continue;

@@ -1,6 +1,6 @@
 {
   "selectors": {
-    "main": "div[itemprop=\"articleBody\"]",
+    "main": "#gc-pagecontent",
     "title": "h1",
     "description": "meta[name=\"description\"]"
   },
@@ -10,10 +10,12 @@
     "style",
     "footer",
     "p.backtotop",
-    "h1"
+    "h1",
+    "table.controlbox",
+    "img"
   ],
   "modifications": "modifications/dcc.js",
   "history": false,
-  "output": "/Users/kayce/Desktop",
+  "output": "/Users/kayce/Repositories/developers.chrome.com/site/en/docs",
   "frontmatter": true
 }
