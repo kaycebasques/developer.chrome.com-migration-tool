@@ -121,11 +121,17 @@ async function migrate(targets, done) {
     // fs.mkdirSync(destination, {recursive: true});
     try {
       await page.goto(target, {
-        waitUntil: 'networkidle0'
+        waitUntil: 'networkidle0',
+        timeout: 0
       });
     } catch (error) {
       console.error(`Error visiting ${target}`);
       continue;
+    }
+    // Need to extract the title before cleanup() so that we don't have duplicate titles on the page
+    if (config.selectors.title) {
+      const title = await page.$eval(config.selectors.title, element => element.textContent);
+      frontmatter += `title: "${title}"\n`;
     }
     await cleanup(page);
     await modify(page);
@@ -137,10 +143,6 @@ async function migrate(targets, done) {
     } catch (error) {
       console.error('Main selector not found.');
       continue;
-    }
-    if (config.selectors.title) {
-      const title = await page.$eval(config.selectors.title, element => element.textContent);
-      frontmatter += `title: "${title}"\n`;
     }
     if (config.selectors.date) {
       // Added this because in the case of developers.google.com/web, we do a network request
@@ -167,7 +169,7 @@ async function migrate(targets, done) {
     }
     if (config.selectors.description) {
       try {
-        await page.waitForSelector(config.selectors.description);
+        await page.waitForSelector(config.selectors.description, {timeout: 3000});
         const description = await page.$eval(config.selectors.description, element => element.textContent);
         frontmatter += `updated: ${description}\n`;
       } catch (error) {
@@ -234,7 +236,7 @@ async function migrate(targets, done) {
         return node.nodeName === 'H2' && node.hasAttribute('id');
       },
       replacement: (content, node) => {
-        return `## ${content} {: #${node.id} }`;
+        return `## ${content} {: #${node.id} }\n\n`;
       }
     });
     turndownService.addRule('h3', {
@@ -242,7 +244,7 @@ async function migrate(targets, done) {
         return node.nodeName === 'H3' && node.hasAttribute('id');
       },
       replacement: (content, node) => {
-        return `### ${content} {: #${node.id} }`;
+        return `### ${content} {: #${node.id} }\n\n`;
       }
     });
     turndownService.addRule('h4', {
@@ -250,7 +252,7 @@ async function migrate(targets, done) {
         return node.nodeName === 'H4' && node.hasAttribute('id');
       },
       replacement: (content, node) => {
-        return `#### ${content} {: #${node.id} }`;
+        return `#### ${content} {: #${node.id} }\n\n`;
       }
     });
     turndownService.addRule('h5', {
@@ -258,7 +260,7 @@ async function migrate(targets, done) {
         return node.nodeName === 'H5' && node.hasAttribute('id');
       },
       replacement: (content, node) => {
-        return `##### ${content} {: #${node.id} }`;
+        return `##### ${content} {: #${node.id} }\n\n`;
       }
     });
     // turndownService.addRule('dt', {

@@ -1,17 +1,19 @@
 {
   "selectors": {
-    "main": ".intro + section:not([id])",
-    "title": "h1"
+    "main": "div[itemprop=\"articleBody\"]",
+    "title": "h1",
+    "description": "meta[name=\"description\"]"
   },
   "deletions": [
     "nav.inline-toc",
     "a.permalink",
     "style",
     "footer",
-    "p.backtotop"
+    "p.backtotop",
+    "h1"
   ],
   "modifications": "modifications/dcc.js",
   "history": false,
-  "output": "/Users/kayce/Repositories/developers.chrome.com/site/en/docs/extensions/reference/_apis",
-  "frontmatter": false
+  "output": "/Users/kayce/Repositories/developers.chrome.com/site/en/docs",
+  "frontmatter": true
 }
