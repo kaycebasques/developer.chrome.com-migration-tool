@@ -123,9 +123,9 @@ async function migrate(targets, done) {
       const response = await page.goto(target, {
         waitUntil: 'networkidle0'
       });
-      const status = response.status();
-      if (status >= 300 || status < 400) {
-        console.info('Redirection detected… skipping');
+      const url = await page.url();
+      if (url !== target) {
+        console.error(`Skipping because of redirection to ${url}`);
         continue;
       }
     } catch (error) {

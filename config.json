@@ -1,6 +1,6 @@
 {
   "selectors": {
-    "main": "#gc-pagecontent",
+    "main": "div[itemprop=\"articleBody\"]",
     "title": "h1",
     "description": "meta[name=\"description\"]"
   },
@@ -10,9 +10,7 @@
     "style",
     "footer",
     "p.backtotop",
-    "h1",
-    "table.controlbox",
-    "img"
+    "h1"
   ],
   "modifications": "modifications/dcc.js",
   "history": false,
