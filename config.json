@@ -1,19 +1,20 @@
 {
   "selectors": {
-    "main": "div[itemprop=\"articleBody\"]",
-    "title": "h1",
+    "main": "article.devsite-article",
+    "title": "h1.devsite-page-title",
+    "date": "#docs-migration-tool-date",
+    "update": "#docs-migration-tool-update",
     "description": "meta[name=\"description\"]"
   },
   "deletions": [
-    "nav.inline-toc",
-    "a.permalink",
-    "style",
-    "footer",
-    "p.backtotop",
-    "h1"
+    "devsite-tracking-question",
+    "div.devsite-banner",
+    "devsite-toc",
+    "div.devsite-article-meta",
+    "section.wf-byline",
+    "style"
   ],
-  "modifications": "modifications/dcc.js",
+  "modifications": "modifications/webfu.js",
   "history": false,
-  "output": "/Users/kayce/Repositories/developers.chrome.com/site/en/docs",
-  "frontmatter": true
+  "output": "/Users/kayce/Repositories/developer.chrome.com/site/en/docs/devtools/tmp"
 }
