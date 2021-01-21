@@ -110,11 +110,15 @@ async function migrate(targets, done) {
   // TODO move to init? And expose page as a global?
   done = done.length > 0 ? `${done.join('\n')}` : '';
   for (let i = 0; i < targets.length; i++) {
-    let frontmatter = 
-        '---\n' +
-        // TODO(kaycebasques): Need to configure this because it's DCC-specific.
-        `layout: 'layouts/doc-post.njk'\n`;
     const target = targets[i];
+    let frontmatter = '---\n';
+
+    if (config.layouts) {
+      for (const layout in config.layouts) {
+        if (target.includes(layout)) frontmatter += `layout: "${config.layouts[layout]}"\n`;
+      }
+    }
+
     console.info(`Scraping ${target}`);
     const pathname = new URL(target).pathname;
     // const destination = `${outputDirectory}${pathname}`;
@@ -173,9 +177,9 @@ async function migrate(targets, done) {
     }
     if (config.selectors.description) {
       try {
-        await page.waitForSelector(config.selectors.description, {timeout: 3000});
-        const description = await page.$eval(config.selectors.description, element => element.textContent);
-        frontmatter += `updated: ${description}\n`;
+        await page.waitForSelector(config.selectors.description.selector);
+        const description = await page.$eval(config.selectors.description.selector, (element, property) => element[property], config.selectors.description.property);
+        frontmatter += `description: ${description}\n`;
       } catch (error) {
         console.error('Description element not found.');
         frontmatter += `#description: TODO\n`;

@@ -4,7 +4,14 @@
     "title": "h1.devsite-page-title",
     "date": "#docs-migration-tool-date",
     "update": "#docs-migration-tool-update",
-    "description": "meta[name=\"description\"]"
+    "description": {
+      "selector": "meta[name=\"description\"]",
+      "property": "content"
+    }
+  },
+  "layouts": {
+    "/web/updates": "layouts/blog-post.njk",
+    "/web/tools/chrome-devtools": "layouts/doc-post.njk"
   },
   "deletions": [
     "devsite-tracking-question",
@@ -12,9 +19,45 @@
     "devsite-toc",
     "div.devsite-article-meta",
     "section.wf-byline",
-    "style"
+    "style",
+    "h1",
+    "devsite-thumb-rating",
+    "#feedback",
+    "#discover",
+    "#discover59",
+    "#discover60",
+    "#discover61",
+    "#discover62",
+    "#discover63",
+    "#discover64",
+    "#discover65",
+    "#discover66",
+    "#discover67",
+    "#discover68",
+    "#discover69",
+    "#discover70",
+    "#discover71",
+    "#discover72",
+    "#discover73",
+    "#discover74",
+    "#discover75",
+    "#discover76",
+    "#discover77",
+    "#discover78",
+    "#discover79",
+    "#discover80",
+    "#discover81",
+    "#discover82",
+    "#discover83",
+    "#discover84",
+    "#discover85",
+    "#discover86",
+    "#discover87",
+    "#discover88",
+    "#discover89"
   ],
   "modifications": "modifications/webfu.js",
   "history": false,
-  "output": "/Users/kayce/Repositories/developer.chrome.com/site/en/docs/devtools/tmp"
+  "output": "/Users/kayce/Repositories/developer.chrome.com/site/en/docs/devtools/tmp",
+  "frontmatter": true
 }
