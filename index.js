@@ -88,6 +88,10 @@ async function modify(page) {
   await page.addScriptTag({
     path: config.modifications
   });
+  // TODO(kaycebasques): Document that the modifying script needs to set window.modificationsDone
+  // to signal when we can proceed. E.g. without this we just insert the modification script
+  // without waiting for it to finish.
+  await page.waitForFunction(() => 'modificationsDone' in window);
 }
 
 async function cleanup(page) {
@@ -104,7 +108,7 @@ async function migrate(targets, done) {
   //const config = require('./config.json');
   const browser = await puppeteer.launch({
     headless: false,
-    // devtools: true
+    devtools: true
   });
   const page = await browser.newPage();
   // TODO move to init? And expose page as a global?
@@ -136,13 +140,22 @@ async function migrate(targets, done) {
       console.error(`Error visiting ${target}`);
       continue;
     }
+    // Modification needs to happen before the authors logic because the author nodes
+    // don't exist until the modification script runs.
+    await modify(page);
     // Need to extract the title before cleanup() so that we don't have duplicate titles on the page
     if (config.selectors.title) {
       const title = await page.$eval(config.selectors.title, element => element.textContent);
       frontmatter += `title: "${title}"\n`;
     }
+    if (config.selectors.author) {
+      const authors = await page.$$eval(config.selectors.author, elements => elements.map(element => element.textContent));
+      if (authors.length > 0) {
+        frontmatter += `authors:\n`;
+        frontmatter += `${authors.map(author => `  - ${author}\n`)}`;
+      }
+    }
     await cleanup(page);
-    await modify(page);
     // TODO move to config.json
     const contentSelector = config.selectors.main;
     let html;

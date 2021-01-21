@@ -32,14 +32,21 @@
   document.body.appendChild(updateNode);
   // Get authors.
   const authors = [].slice.call(document.querySelectorAll('section.wf-byline img'));
-  authors.forEach(author => {
-    let name = author.img.substring(author.img.lastIndexOf('/'));
-    name.replace('.jpg', '');
-    name.replace('.png', '');
+  authors.forEach(img => {
+    let name = img.src.substring(img.src.lastIndexOf('/') + 1);
+    name = name.replace('.jpg', '');
+    name = name.replace('.png', '');
     const p = document.createElement('p');
     p.textContent = name;
     p.classList.add('docs-migration-tool-author');
     document.body.appendChild(p);
   });
+  let next = document.querySelector('#feedback');
+  let previous;
+  do {
+    previous = next;
+    next = next.nextElementSibling;
+    previous.remove();
+} while (next.nextElementSibling);
   window.modificationsDone = true;
 })();
