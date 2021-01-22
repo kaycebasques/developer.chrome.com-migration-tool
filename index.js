@@ -230,23 +230,31 @@ async function migrate(targets, done) {
     // Not working. Can't get a newline after first !!! characters.
     turndownService.addRule('notes', {
       filter: node => {
-        return node.nodeName === 'P' && node.classList.contains('note');
+        return node.nodeName === 'ASIDE' && node.classList.contains('note');
       },
       replacement: (content, node) => {
         return `!!!.aside.aside--note\n\n${content}\n\n!!!\n\n`
       }
     });
-    turndownService.addRule('cautions', {
+    turndownService.addRule('videos', {
       filter: node => {
-        return node.nodeName === 'P' && node.classList.contains('caution');
+        return node.nodeName === 'P' && node.classList.contains('docs-migration-tool-video');
       },
       replacement: (content, node) => {
-        return `!!!.aside.aside--caution\n\n${content}\n\n!!!\n\n`
+        return `{% youtube id="${content}" %}\n\n`;
+      }
+    });
+    turndownService.addRule('cautions', {
+      filter: node => {
+        return node.nodeName === 'ASIDE' && node.classList.contains('caution');
+      },
+      replacement: (content, node) => {
+        return `!!!.aside.aside--caution\n\n${content}\n\n!!!\n\n`;
       }
     });
     turndownService.addRule('warnings', {
       filter: node => {
-        return node.nodeName === 'P' && node.classList.contains('warning');
+        return node.nodeName === 'ASIDE' && node.classList.contains('warning');
       },
       replacement: (content, node) => {
         return `!!!.aside.aside--warning\n\n${content}\n\n!!!\n\n`

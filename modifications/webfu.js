@@ -48,5 +48,14 @@
     next = next.nextElementSibling;
     previous.remove();
 } while (next.nextElementSibling);
+  // Convert videos into a format that we can detect.
+  const videos = [].slice.call(document.querySelectorAll('devsite-youtube'));
+  videos.forEach(video => {
+    const p = document.createElement('p');
+    p.textContent = video.getAttribute('video-id');
+    p.classList.add('docs-migration-tool-video');
+    video.parentNode.parentNode.insertBefore(p, video.parentNode);
+    video.parentNode.remove();
+  });
   window.modificationsDone = true;
 })();
