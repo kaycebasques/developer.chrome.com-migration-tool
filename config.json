@@ -11,7 +11,7 @@
     "author": "p.docs-migration-tool-author"
   },
   "layouts": {
-    "/web/updates": "layouts/blog-post.njk",
+    "/web/updates": "layouts/doc-post.njk",
     "/web/tools/chrome-devtools": "layouts/doc-post.njk"
   },
   "deletions": [

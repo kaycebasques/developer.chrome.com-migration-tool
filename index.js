@@ -192,7 +192,7 @@ async function migrate(targets, done) {
       try {
         await page.waitForSelector(config.selectors.description.selector);
         const description = await page.$eval(config.selectors.description.selector, (element, property) => element[property], config.selectors.description.property);
-        frontmatter += `description: ${description}\n`;
+        frontmatter += `description: "${description}"\n`;
       } catch (error) {
         console.error('Description element not found.');
         frontmatter += `#description: TODO\n`;
