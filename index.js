@@ -1,3 +1,5 @@
+// TODO handle <kbd>
+
 const readline = require('readline');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -216,7 +218,7 @@ async function migrate(targets, done) {
       linkStyle: 'referenced',
       linkReferenceStyle: 'full'
     });
-    turndownService.keep(['table']);
+    turndownService.keep(['table', 'kbd']);
     // TODO(kaycebasques): Refactor this DCC-specific code.
     // turndownService.keep(node => {
     //   return node.nodeName === 'DIV' && node.classList.contains('aside--note');
@@ -304,7 +306,11 @@ async function migrate(targets, done) {
     //     return `: ${content}`;
     //   }
     // });
-    const markdown = turndownService.turndown(html);
+    let markdown = turndownService.turndown(html);
+    // Remove smart quotes.
+    markdown = markdown.replace(/’/g, "'");
+    markdown = markdown.replace(/“/g, '"');
+    markdown = markdown.replace(/”/g, '"');
     frontmatter += '---\n\n';
     let output = `${markdown}`;
     if (config.frontmatter) output = `${frontmatter}${output}`; 
